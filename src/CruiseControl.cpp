@@ -4,7 +4,7 @@
 #define CRUISE_ACTIVE (1 << 0)
 #define CRUISE_FAULT  (1 << 1)
 
-CruiseControl::CruiseControl(): speed(0), mode(CruiseMode::OFF), flags(0) {}
+CruiseControl::CruiseControl(): speed(0), mode(CruiseMode::OFF), flags(0), faultCallback(nullptr) {}
 
 //PUBLIC API IMPLEMENTATION
 
@@ -34,11 +34,19 @@ void CruiseControl::brakePressed(){
 void CruiseControl::sensorError(){
     setFlag(FLAG_SENSOR_ERROR);
     mode = CruiseMode::FAULT;
+
+    if(faultCallback){
+        faultCallback(1001);
+    }
 }
 
 void CruiseControl::resetFault(){
     flags = 0;
     mode = CruiseMode::OFF;
+}
+
+void CruiseControl::registerFaultCallback(FaultCallback cb) {
+    faultCallback = cb;
 }
 
 // GETTERS for testing purpose
@@ -47,13 +55,14 @@ CruiseMode CruiseControl::getMode() const {
     return mode;
 }
 
+
 bool CruiseControl::isFlagSet(int flag) const{
      return flags & flag;
 }
 
-int CruiseControl::getSpeed() const{
-    return speed;
-}
+// int CruiseControl::getSpeed() const{
+//     return speed;
+// }
 
 //PRIVATE HELPERS
 
@@ -61,6 +70,6 @@ void CruiseControl::setFlag(int flag) {
     flags |= flag;
 }
 
-void CruiseControl::clearFlag(int flag) {
-    flags &= ~flag; 
-}
+// void CruiseControl::clearFlag(int flag) {
+//     flags &= ~flag; 
+// }

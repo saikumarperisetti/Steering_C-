@@ -15,11 +15,15 @@ enum class CruiseMode {
 
 #define FLAG_BRAKE_PRESSED (1<<0)
 #define FLAG_SENSOR_ERROR  (1<<1)
-#define FLAG_OVERRIDE (1<<2)
+//#define FLAG_OVERRIDE (1<<2)
+/*------------------------
+    FunctionPointer
+-------------------------*/
+using FaultCallback = void (*)(int errorCode);
 
 class CruiseControl : public ICruiseControl {
 public:
-    CruiseControl();
+    CruiseControl();//default Constructor
 
     void setSpeed(int speed) override;
     void start() override;
@@ -28,19 +32,23 @@ public:
     void sensorError() override;
     void resetFault() override;
 
+    //Callback registration
+    void registerFaultCallback(FaultCallback cb);
+
     //for testing purpose
     CruiseMode getMode() const;
     bool isFlagSet(int flag) const;
-    int getSpeed() const;
+    //int getSpeed() const;
 
 
 private:
     int speed;
     CruiseMode mode;
     int flags;
+    FaultCallback faultCallback;
 
     void setFlag(int flag);
-    void clearFlag(int flag);
+    //void clearFlag(int flag);
 };
 
 #endif // CRUISE_CONTROL_H
