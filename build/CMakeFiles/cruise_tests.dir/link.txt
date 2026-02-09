@@ -1,0 +1,1 @@
+/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cruise_tests.dir/tests/test_cruise.cpp.o -o cruise_tests  libcruise_control.a /opt/homebrew/lib/libgtest_main.a -lpthread /opt/homebrew/lib/libgtest.a

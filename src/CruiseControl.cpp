@@ -1,8 +1,8 @@
 #include "CruiseControl.h"
 
 //bit flags
-#define CRUISE_ACTIVE (1 << 0)
-#define CRUISE_FAULT  (1 << 1)
+// #define CRUISE_ACTIVE (1 << 0)
+// #define CRUISE_FAULT  (1 << 1)
 
 CruiseControl::CruiseControl(): speed(0), mode(CruiseMode::OFF), flags(0), faultCallback(nullptr) {}
 

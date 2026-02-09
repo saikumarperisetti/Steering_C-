@@ -1,0 +1,2 @@
+/usr/bin/ar qc libcruise_control.a CMakeFiles/cruise_control.dir/src/CruiseControl.cpp.o CMakeFiles/cruise_control.dir/src/CruiseManager.cpp.o
+/usr/bin/ranlib libcruise_control.a

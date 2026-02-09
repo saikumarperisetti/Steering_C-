@@ -3,11 +3,7 @@
 
 #include "ICruiseControl.h"
 
-enum class CruiseMode {
-    OFF,
-    ACTIVE,
-    FAULT
-};
+
 
 /*-----------------------
    FLAGS
@@ -32,14 +28,12 @@ public:
     void sensorError() override;
     void resetFault() override;
 
+    //Query interface
+    CruiseMode getMode() const override;
+    bool isFlagSet(int flag) const override;
+
     //Callback registration
     void registerFaultCallback(FaultCallback cb);
-
-    //for testing purpose
-    CruiseMode getMode() const;
-    bool isFlagSet(int flag) const;
-    //int getSpeed() const;
-
 
 private:
     int speed;

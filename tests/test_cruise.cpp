@@ -2,12 +2,19 @@
 #include "CruiseControl.h"
 #include "CruiseManager.h"
 
+static int lastErrorCode = 0;
+
+void faultCallback(int code) {
+    lastErrorCode = code;
+}
+
 class CruiseIntegrationTest : public ::testing::Test {
 protected:
     ICruiseControl* ctrl;
     CruiseManager* manager;
     void SetUp() override {
         ctrl = new CruiseControl();
+        static_cast<CruiseControl*>(ctrl)->registerFaultCallback(faultCallback);
         manager = new CruiseManager(ctrl);
     }
     void TearDown() override {
@@ -50,23 +57,19 @@ protected:
 
 TEST_F(CruiseIntegrationTest, EnableCruiseActivateSystem){
     manager->enableCruise(100);
-    
-    auto concrete = static_cast<CruiseControl*>(ctrl);
-    EXPECT_EQ(concrete->getMode(), CruiseMode::ACTIVE);
+    EXPECT_EQ(ctrl->getMode(), CruiseMode::ACTIVE);
 }
 
 TEST_F(CruiseIntegrationTest, BrakeDisabledCruise){
     manager->enableCruise(100);
     manager->applyBrake();
-
-    auto concrete = static_cast<CruiseControl*>(ctrl);
-    EXPECT_EQ(concrete->getMode(), CruiseMode::OFF);
-    EXPECT_TRUE(concrete->isFlagSet(FLAG_BRAKE_PRESSED));
+    EXPECT_EQ(ctrl->getMode(), CruiseMode::OFF);
+    EXPECT_TRUE(ctrl->isFlagSet(FLAG_BRAKE_PRESSED));
 }
 
-TEST_F(CruiseIntegrationTest, SensorFailureLeadsToFault) {
-    manager->handleSensorFailure();
+TEST_F(CruiseIntegrationTest, FaultCallbackTriggered) {
+    manager->enableCruise(10);
 
-    auto concrete = static_cast<CruiseControl*>(ctrl);
-    EXPECT_EQ(concrete->getMode(), CruiseMode::FAULT);
+    EXPECT_EQ(ctrl->getMode(), CruiseMode::FAULT);
+    EXPECT_EQ(lastErrorCode, 1001);
 }
